@@ -135,3 +135,32 @@ The model must not automatically delete content, rewrite or publish pages, creat
 The model should be reviewed or retrained when input distributions or missingness change substantially, evaluation performance declines on later-period data, new content types or client populations appear, or human reviewers report poor recommendation quality.
 
 The action playbook is therefore a decision-support workflow. Final content-refresh decisions remain with human analysts and editorial teams.
+
+# 8. Reproducibility
+
+The analysis was developed using Python notebooks and a fixed random seed of 42 for reproducible data splitting and model configuration.
+
+The workflow can be reproduced by following the project notebooks in sequence and using the anonymized FlyRank internship dataset. The dataset is not included in the public repository to avoid publishing underlying data records.
+
+The main reproducibility steps are:
+
+1. Load the anonymized content-refresh dataset.
+2. Create the `is_declining_proxy` target from `trend_direction`.
+3. Exclude target-related fields and pseudonymous identifiers from predictive features.
+4. Apply numeric imputation, missingness indicators, categorical imputation, one-hot encoding, and numeric standardization.
+5. Train the Logistic Regression model using the fixed random seed.
+6. Evaluate using client-grouped validation and compare the ranking results with the rule-based baseline.
+7. Generate the ranked action playbook and aggregate evaluation outputs.
+
+The ML-10 notebook is available at `work/notebooks/w07_action_playbook.ipynb`. Aggregate metrics are stored in `work/outputs/ml10_action_playbook_metrics.json`, and the generated figures are stored in `work/figures/`.
+
+The row-level action queue and underlying dataset are not included in the public repository. The reported results should be interpreted in the context of the dataset and validation design used in this project.
+
+# 9. Acknowledgments & Data Credit
+
+This project was completed as part of the FlyRank ML Internship.
+
+The analysis uses the anonymized content-refresh dataset provided for the internship. The dataset was used for educational and analytical purposes, with care taken to exclude client-identifying information and row-level content identifiers from public project artifacts.
+
+Built on the [FlyRank ML Internship dataset](https://flyrank.ai).
+
