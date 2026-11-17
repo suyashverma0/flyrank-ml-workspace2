@@ -21,3 +21,13 @@ The historical `trend_direction` field is used only to create the declining-cont
 The pseudonymous identifiers `content_id` and `client_id` are not used as predictive features. They are used only for content traceability and client-grouped validation.
 
 Client names, domains, private search queries, URLs, credentials, and raw client-identifying exports are excluded from public project artifacts.
+
+### Classification performance and error analysis
+
+The Logistic Regression model achieved an overall accuracy of 0.53 on 7,115 test records. The positive proxy class contained 3,675 records, representing a base rate of approximately 51.65%.
+
+For the positive class, the model achieved precision of 0.54, recall of 0.64, and an F1-score of 0.58. The confusion matrix contained 2,340 true positives, 1,445 true negatives, 1,995 false positives, and 1,335 false negatives.
+
+The model identifies a relatively large proportion of positive proxy cases, but it also produces a substantial number of false positives. Its accuracy is only slightly above the positive-class base rate, so accuracy alone does not establish strong predictive discrimination.
+
+These results support cautious use as a prioritization aid, with human review required before any content-refresh decision.
