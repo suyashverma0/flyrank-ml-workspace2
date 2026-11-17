@@ -1,0 +1,32 @@
+{
+  "scored_items": 7115,
+  "average_model_score": 0.5073,
+  "median_model_score": 0.5455,
+  "minimum_model_score": 0.0924,
+  "maximum_model_score": 0.7815,
+  "reason_code_counts": {
+    "Low CTR; Low engagement": 2693,
+    "Low engagement": 1610,
+    "No listed warning signal": 1045,
+    "Low CTR; Low engagement; Weak average position": 946,
+    "Low engagement; Weak average position": 455,
+    "Weak average position": 191,
+    "Low CTR": 75,
+    "Low CTR; Weak average position": 53,
+    "Low CTR; Low engagement; Not updated for 180+ days": 34,
+    "Low engagement; Not updated for 180+ days": 7,
+    "Low CTR; Low engagement; Not updated for 180+ days; Weak average position": 6
+  },
+  "missingness_percentage": {
+    "search_volume": 2.09,
+    "competition": 2.09,
+    "cpc": 2.09,
+    "word_count": 15.25,
+    "char_count": 15.25,
+    "content_age_days": 0.0,
+    "days_since_last_update": 0.0,
+    "competition_level": 2.33,
+    "content_type": 0.0,
+    "main_intent": 0.25
+  }
+}
