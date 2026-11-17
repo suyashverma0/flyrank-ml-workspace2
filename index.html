@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="An applied machine learning study on prioritizing website content for human review.">
+<title>Can Content Metadata Help Prioritize Content for Human Review?</title>
+<style>
+:root {
+  --bg:#f5f7fb; --paper:#fff; --ink:#182230;
+  --muted:#5e6b7b; --line:#e4e9f0;
+  --accent:#3157d5; --soft:#edf1ff;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.72 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.hero{
+  background:radial-gradient(circle at 85% 15%,#344e9a 0,transparent 30%),
+  linear-gradient(135deg,#101a2d,#1c2b49);
+  color:white;padding:76px 24px 68px;
+}
+.hero-inner,main,footer{max-width:1050px;margin:auto}
+.eyebrow{
+  display:inline-block;padding:6px 11px;border:1px solid #ffffff40;
+  border-radius:99px;color:#dbe4ff;font-size:12px;
+  letter-spacing:.11em;text-transform:uppercase;font-weight:700;
+}
+h1{max-width:850px;margin:22px 0 18px;font-size:clamp(2.25rem,5vw,4rem);line-height:1.1;letter-spacing:-.045em}
+.hero p{max-width:760px;color:#d6deed;font-size:1.12rem}
+.hero-meta{margin-top:30px;color:#b9c6dc;font-size:.9rem}
+main{padding:38px 22px 80px}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:30px;align-items:start}
+aside{
+  position:sticky;top:22px;background:white;border:1px solid var(--line);
+  border-radius:15px;padding:20px;box-shadow:0 16px 45px #15233a12;
+}
+aside strong{display:block;margin-bottom:12px}
+aside a{display:block;padding:5px 0;color:var(--muted);font-size:.86rem}
+article{min-width:0}
+section,.abstract{
+  background:white;border:1px solid var(--line);border-radius:17px;
+  padding:clamp(22px,4vw,38px);margin-bottom:22px;
+  box-shadow:0 16px 45px #15233a12;
+}
+.abstract{border-top:4px solid var(--accent)}
+h2{margin:0 0 18px;font-size:1.55rem;line-height:1.25}
+h3{margin:25px 0 8px;font-size:1.08rem}
+p{margin:0 0 14px}
+.kicker{color:var(--accent);text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;font-weight:800;margin-bottom:9px}
+.muted{color:var(--muted)}
+.callout{background:var(--soft);border-left:3px solid var(--accent);padding:15px 18px;border-radius:8px;margin:18px 0}
+.warning{background:#fff7e8;border-left:3px solid #d69a2d;padding:15px 18px;border-radius:8px;margin:18px 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+.stat{padding:16px;background:#f7f9fc;border:1px solid var(--line);border-radius:12px}
+.stat b{display:block;font-size:1.35rem}
+.stat span{display:block;color:var(--muted);font-size:.78rem}
+table{border-collapse:collapse;width:100%;margin:16px 0 20px;font-size:.91rem}
+th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f5f7fb;color:#344054}
+.table-wrap{overflow-x:auto}
+figure{margin:22px 0}
+figure img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px}
+figcaption{color:var(--muted);font-size:.83rem;margin-top:8px}
+ul,ol{padding-left:22px;margin:10px 0 16px}
+li{margin:5px 0}
+code{background:#f0f3f8;border-radius:5px;padding:2px 5px;font-size:.88em}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.links a{display:inline-block;background:var(--soft);padding:9px 13px;border-radius:8px;font-weight:650;font-size:.88rem}
+footer{padding:0 22px 40px;color:var(--muted);font-size:.85rem}
+@media(max-width:800px){
+.layout{grid-template-columns:1fr}
+aside{position:static}
+aside nav{columns:2}
+.stats{grid-template-columns:repeat(2,1fr)}
+.hero{padding-top:55px}
+}
+@media(max-width:460px){
+.stats{grid-template-columns:1fr 1fr}
+section,.abstract{padding:21px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+<div class="hero-inner">
+<span class="eyebrow">Machine Learning · Applied Research</span>
+<h1>Can Content Metadata Help Prioritize Content for Human Review?</h1>
+<p>An applied study of ranking website content items for editorial review using an anonymized content-refresh dataset and a client-grouped evaluation design.</p>
+<div class="hero-meta">FlyRank ML Internship Project · Logistic Regression · Decision-Support Workflow</div>
+</div>
+</header>
+
+<main>
+<div class="layout">
+
+<aside>
+<strong>On this page</strong>
+<nav>
+<a href="#abstract">Abstract</a>
+<a href="#problem">1. Problem</a>
+<a href="#data">2. Data</a>
+<a href="#method">3. Methodology</a>
+<a href="#results">4. Results</a>
+<a href="#limitations">5. Limitations</a>
+<a href="#recommendations">6. Recommendations</a>
+<a href="#reproducibility">7. Reproducibility</a>
+<a href="#acknowledgments">8. Acknowledgments</a>
+</nav>
+</aside>
+
+<article>
+
+<div class="abstract" id="abstract">
+<div class="kicker">Abstract</div>
+<p>This project investigates whether content metadata can help prioritize website content items for human review. The analysis uses an anonymized dataset of 30,000 content records with 44 fields, while excluding identifiers and target-related fields from predictive inputs. A Logistic Regression pipeline is evaluated against a rule-based baseline, with client-grouped validation used as the primary evaluation design to reduce client overlap between training and test data. On the grouped test set, the model achieves precision at 10 of 0.60 and precision at 50 of 0.64, compared with 0.50 and 0.56 for the baseline, while its precision at 100 is lower than the baseline. The resulting score and reason codes are therefore treated as decision-support signals for human review, not as proof that a content refresh will improve search performance.</p>
+</div>
+
+<section id="problem">
+<div class="kicker">Context</div>
+<h2>1. Problem Framing</h2>
+<p>Content teams may manage large collections of website pages, making it difficult to decide which items deserve attention first. This project explores whether available content metadata can help produce a review queue that gives analysts a useful starting point.</p>
+<p>The unit of analysis is an individual content item. The intended users are SEO analysts, content strategists, and editorial teams who can inspect a prioritized list and decide whether further investigation or a content update is appropriate.</p>
+<p>The system supports prioritization rather than replacing editorial judgment. A false positive may send a healthy page for unnecessary review; a false negative may leave a potentially declining page lower in the queue.</p>
+<div class="callout"><strong>Decision supported:</strong> Which content items should a human reviewer inspect first? The model does not decide whether a page should be rewritten, removed, or redirected.</div>
+</section>
+
+<section id="data">
+<div class="kicker">Dataset</div>
+<h2>2. Data and Safety</h2>
+<div class="stats">
+<div class="stat"><b>30,000</b><span>Content records</span></div>
+<div class="stat"><b>44</b><span>Dataset fields</span></div>
+<div class="stat"><b>7</b><span>Numeric features</span></div>
+<div class="stat"><b>3</b><span>Categorical features</span></div>
+</div>
+<p>The analysis uses the anonymized content-refresh dataset supplied for the internship. The dataset contains content metadata and performance-related signals. It is not included in the public repository.</p>
+<p>The proxy target, <code>is_declining_proxy</code>, is defined as 1 when <code>trend_direction</code> is <code>down</code>, and 0 otherwise. This is a historical proxy label, not a direct measurement of whether a future refresh will succeed.</p>
+<p>Predictive numeric inputs include search volume, competition, CPC, word count, character count, content age, and days since last update. Categorical inputs include competition level, content type, and main intent.</p>
+<ul>
+<li><code>content_id</code> and <code>client_id</code> were excluded from predictive features.</li>
+<li><code>client_id</code> was used only to create client-grouped train/test partitions.</li>
+<li><code>trend_direction</code> and <code>trend_pct</code> were excluded from model inputs to avoid target leakage.</li>
+<li>Public artifacts avoid client-identifying details, private queries, URLs, credentials, and row-level exports.</li>
+</ul>
+</section>
+
+<section id="method">
+<div class="kicker">Approach</div>
+<h2>3. Methodology</h2>
+<h3>Baseline</h3>
+<p>A rule-based baseline uses available warning signals such as low click-through rate, low engagement, stale update dates, and weak average position. It provides a practical comparison for evaluating whether model-based ranking changes the order of items near the top of the review queue.</p>
+<h3>Model Pipeline</h3>
+<p>A Logistic Regression classifier was trained using a preprocessing pipeline. Numeric values were imputed, missingness indicators were retained, categorical values were imputed and one-hot encoded, and numeric features were standardized. Balanced class weights and a fixed random seed of 42 were used.</p>
+<h3>Validation Design</h3>
+<p>A random row split was examined, but the primary evaluation uses GroupShuffleSplit by client. The grouped design places clients in either the training or test partition, with no client overlap, providing a more cautious check of ranking performance on held-out clients.</p>
+<div class="callout"><strong>Evaluation focus:</strong> Precision at K (P@K) measures the share of declining-proxy items among the top K ranked items.</div>
+</section>
+
+<section id="results">
+<div class="kicker">Evaluation</div>
+<h2>4. Results</h2>
+<p>The grouped test set contains 7,115 records from 8 held-out clients. The training partition contains 22,885 records from 24 clients; there is no client overlap. The positive-class rate in the grouped test set is 51.65%.</p>
+
+<h3>Model versus Baseline</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Metric</th><th>Rule-based Baseline</th><th>Logistic Regression</th></tr></thead>
+<tbody>
+<tr><td>Precision at 10</td><td>0.50</td><td><strong>0.60</strong></td></tr>
+<tr><td>Precision at 50</td><td>0.56</td><td><strong>0.64</strong></td></tr>
+<tr><td>Precision at 100</td><td><strong>0.59</strong></td><td>0.55</td></tr>
+</tbody>
+</table>
+</div>
+<p>The model ranks better at the top 10 and top 50 positions in this evaluation, while the baseline performs better at the top 100. The result is mixed rather than uniformly better across every queue size.</p>
+
+<h3>Classification Context</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1-score</th><th>Support</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>0.52</td><td>0.42</td><td>0.46</td><td>3,440</td></tr>
+<tr><td>1</td><td>0.54</td><td>0.64</td><td>0.58</td><td>3,675</td></tr>
+<tr><td>Accuracy</td><td colspan="3">0.53</td><td>7,115</td></tr>
+</tbody>
+</table>
+</div>
+<p>Accuracy is 0.53, only slightly above the grouped test-set positive rate of 0.5165. This is not evidence of strong overall class discrimination. The project therefore emphasizes ranking metrics and cautious use in a review workflow.</p>
+
+<figure>
+<img src="work/figures/ml10_score_distribution.png" alt="Distribution of model scores across the action queue" loading="lazy">
+<figcaption>Figure 1. Distribution of model scores in the action queue. Scores are ranking signals and should not be interpreted as calibrated probabilities.</figcaption>
+</figure>
+
+<p>The action queue contains 7,115 records. Model scores range from 0.0924 to 0.7815, with a mean of 0.5073 and a median of 0.5455. These values are useful for ordering records within this workflow, not for interpreting an individual score as a reliable probability.</p>
+
+<h3>Leakage and Feature Interpretation Checks</h3>
+<p>The leakage audit found zero forbidden target/identifier overlaps and zero performance-feature overlap under the project's audit checks. In the fitted model, the largest positive coefficient was associated with the Unknown competition category (+1.278), followed by informational intent (+0.478), commercial intent (+0.346), and days since last update (+0.237). Larger negative coefficients included navigational intent (-0.559), LOW competition (-0.515), and content age (-0.322).</p>
+<p>These coefficients describe associations learned by this model under the chosen encoding and data. They do not establish causal effects. The Unknown category may also reflect missing-data patterns rather than a meaningful content characteristic.</p>
+</section>
+
+<section id="limitations">
+<div class="kicker">Honest Framing</div>
+<h2>5. Limitations</h2>
+<ul>
+<li>The target is a proxy derived from historical trend direction; it is not a verified label of content quality or future refresh success.</li>
+<li>Grouped evaluation is based on a limited set of held-out clients and may not represent every future client or content population.</li>
+<li>Model accuracy is modest, and P@K results vary by queue size. The model does not outperform the baseline at every K.</li>
+<li>Missing values and category distributions may change over time, affecting model behavior.</li>
+<li>Reason codes are rule-based explanations from observed warning signals; they are not explanations of the model's internal feature contributions.</li>
+<li>The available analysis does not establish that taking an action on a recommended page causes traffic, ranking, or engagement improvements.</li>
+</ul>
+<div class="warning"><strong>Interpretation boundary:</strong> This is a prioritization experiment for human review. It is not a system for predicting Google's algorithm, guaranteeing ranking gains, or automating editorial decisions.</div>
+</section>
+
+<section id="recommendations">
+<div class="kicker">Operational Use</div>
+<h2>6. Ranked Recommendations</h2>
+<p>The ML-10 action playbook produces a ranked queue of 7,115 items and attaches reason codes based on defined warning signals. The most frequent reason combinations were:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Reason Code</th><th>Count</th></tr></thead>
+<tbody>
+<tr><td>Low CTR; Low engagement</td><td>2,693</td></tr>
+<tr><td>Low engagement</td><td>1,610</td></tr>
+<tr><td>No listed warning signal</td><td>1,045</td></tr>
+<tr><td>Low CTR; Low engagement; Weak average position</td><td>946</td></tr>
+<tr><td>Low engagement; Weak average position</td><td>455</td></tr>
+<tr><td>Weak average position</td><td>191</td></tr>
+<tr><td>Low CTR</td><td>75</td></tr>
+<tr><td>Low CTR; Weak average position</td><td>53</td></tr>
+</tbody>
+</table>
+</div>
+
+<figure>
+<img src="work/figures/ml10_reason_codes.png" alt="Frequency of reason codes in the action playbook" loading="lazy">
+<figcaption>Figure 2. Frequency of the most common reason codes in the action playbook. Reason codes summarize rule-based warning signals.</figcaption>
+</figure>
+
+<p>“No listed warning signal” means that none of the defined rules fired; it does not mean that the page is performing well. Reviewers should use the ranked queue as a starting point and inspect the underlying evidence before making a decision.</p>
+
+<h3>Suggested Human-Review Workflow</h3>
+<ol>
+<li>Start with the highest-ranked items in the queue.</li>
+<li>Check content relevance and whether the page still satisfies the intended search intent.</li>
+<li>Verify data quality and confirm that the warning signals are meaningful for the page.</li>
+<li>Record a human decision and rationale before planning any content change.</li>
+<li>Evaluate outcomes separately; do not assume that a recommendation caused a later performance change.</li>
+</ol>
+
+<p>Human reviewers should assess content relevance, search intent, and data quality. The score alone must not trigger an action.</p>
+
+<h3>Actions Outside the System's Scope</h3>
+<ul>
+<li>No automatic deletion, rewriting, or publishing.</li>
+<li>No automatic URL redirects.</li>
+<li>No guarantee of ranking or traffic improvement.</li>
+<li>No action based on the model score alone.</li>
+</ul>
+
+<h3>Monitoring and Retraining Triggers</h3>
+<p>Reassessment is appropriate if input distributions or missingness change substantially, later-period evaluation metrics decline, new content types or client populations appear, or human reviewers report poor recommendation quality.</p>
+</section>
+
+<section id="reproducibility">
+<div class="kicker">Reproduction</div>
+<h2>7. Reproducibility</h2>
+<p>The analysis was developed using Python notebooks and a fixed random seed of 42 for reproducible data splitting and model configuration. The workflow can be reproduced by following the project notebooks in sequence with the anonymized internship dataset, which is not included in the public repository.</p>
+<ol>
+<li>Load the anonymized content-refresh dataset.</li>
+<li>Create <code>is_declining_proxy</code> from <code>trend_direction</code>.</li>
+<li>Exclude target-related fields and pseudonymous identifiers from predictive features.</li>
+<li>Apply numeric imputation, missingness indicators, categorical imputation, one-hot encoding, and numeric standardization.</li>
+<li>Train the Logistic Regression model using the fixed random seed.</li>
+<li>Evaluate using client-grouped validation and compare ranking results with the rule-based baseline.</li>
+<li>Generate the ranked action playbook and aggregate evaluation outputs.</li>
+</ol>
+<div class="links">
+<a href="work/notebooks/w07_action_playbook.ipynb">Open ML-10 Notebook</a>
+<a href="work/outputs/ml10_action_playbook_metrics.json">View Aggregate Metrics JSON</a>
+</div>
+<p class="muted">The row-level action queue and underlying dataset are not included in the public repository. Reported results should be interpreted in the context of the dataset and validation design used in this project.</p>
+</section>
+
+<section id="acknowledgments">
+<div class="kicker">Data Credit</div>
+<h2>8. Acknowledgments &amp; Data Credit</h2>
+<p>This project was completed as part of the FlyRank ML Internship. The analysis uses the anonymized content-refresh dataset provided for the internship. The dataset was used for educational and analytical purposes, with care taken to exclude client-identifying information and row-level content identifiers from public project artifacts.</p>
+<p>Built on the <a href="https://flyrank.ai" target="_blank" rel="noopener noreferrer">FlyRank ML Internship dataset</a>.</p>
+</section>
+
+</article>
+</div>
+</main>
+
+<footer>
+<p>Applied machine-learning project report · Results are descriptive of this dataset and evaluation design, not a guarantee of future outcomes.</p>
+</footer>
+
+</body>
+</html>
