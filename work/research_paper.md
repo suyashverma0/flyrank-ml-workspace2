@@ -33,7 +33,7 @@ No client names, domains, private search queries, URLs, credentials, raw client-
 
 ## 3. Methodology
 
-### 3.1 Target definition
+### 3.1 Target Definition
 
 The binary target, `is_declining_proxy`, was defined as:
 
@@ -42,7 +42,7 @@ The binary target, `is_declining_proxy`, was defined as:
 
 This is a historical proxy label, not a direct measurement of whether a future content refresh will succeed.
 
-### 3.2 Predictive features
+### 3.2 Predictive Features
 
 The model used seven numeric features:
 
@@ -62,13 +62,13 @@ It also used three categorical features:
 
 Numeric missing values were handled through median imputation with missingness indicators. Categorical missing values were represented as `Unknown` and one-hot encoded. Numeric features were standardized.
 
-### 3.3 Model and baseline
+### 3.3 Model and Baseline
 
 Logistic Regression was selected as the classification model. It used balanced class weights, a maximum iteration limit of 2,000, and a fixed random seed of 42.
 
 A rule-based baseline combined review signals such as low CTR, low engagement, older update dates, and weak average search position. Its thresholds were calculated using training data.
 
-### 3.4 Validation design
+### 3.4 Validation Design
 
 Two validation strategies were evaluated:
 
@@ -81,7 +81,7 @@ A feature leakage audit checked that target-related fields and excluded identifi
 
 ## 4. Results
 
-### 4.1 Validation strategy comparison
+### 4.1 Validation Strategy Comparison
 
 | Metric | Random split | Client-grouped split |
 |---|---:|---:|
@@ -97,7 +97,7 @@ The random split produced higher Precision@K values, but allowed clients to appe
 
 These results should be interpreted as sensitivity to validation design, not as a perfectly controlled comparison, because the test records and positive-class rates differ.
 
-### 4.2 Model versus baseline
+### 4.2 Model Versus Baseline
 
 The following results use the same client-grouped test set.
 
@@ -111,7 +111,7 @@ Logistic Regression performed better at the top 10 and top 50 positions. The bas
 
 This indicates that the model may be more useful for prioritizing a smaller review list, but it does not outperform the baseline at every ranking depth.
 
-### 4.3 Classification results
+### 4.3 Classification Results
 
 On the grouped test set, Logistic Regression achieved:
 
@@ -124,6 +124,14 @@ On the grouped test set, Logistic Regression achieved:
 The confusion matrix contained 2,340 true positives, 1,445 true negatives, 1,995 false positives, and 1,335 false negatives.
 
 Accuracy was only slightly above the positive-class base rate. Therefore, the results do not establish strong overall predictive discrimination.
+
+### 4.4 Model Score Distribution
+
+The ML-10 action playbook generated model scores for 7,115 content items in the client-grouped test set. The scores are used to rank items for review and should not be interpreted as calibrated probabilities.
+
+![ML-10 Model Score Distribution](figures/ml10_score_distribution.png)
+
+*Figure 1: Distribution of model scores across the ranked action queue. The scores provide a relative ranking signal rather than a calibrated probability of decline.*
 
 ## 5. Interpretation
 
@@ -180,6 +188,16 @@ The system must not automatically delete content, rewrite or publish pages, crea
 
 Monitoring and possible retraining should be considered when input distributions or missingness change substantially, later-period evaluation declines, new client populations or content types appear, or human reviewers report poor recommendation quality.
 
+### 7.1 Action Queue Reason Codes
+
+The action playbook assigns reason codes to help analysts understand which review signals were triggered for each item.
+
+![ML-10 Reason Code Frequency](figures/ml10_reason_codes.png)
+
+*Figure 2: Most frequent reason-code combinations in the generated action queue. These signals support human review and do not independently establish that content needs updating.*
+
+The presence of no listed warning signal does not necessarily mean an item is performing well. It only indicates that none of the defined reason-code rules was triggered.
+
 ## 8. Reproducibility
 
 The project uses Python notebooks and a fixed random seed of 42 for the reported model configuration and validation workflow.
@@ -194,13 +212,13 @@ The main workflow includes:
 6. Evaluating the model against the rule-based baseline.
 7. Generating the ranked action playbook and aggregate metrics.
 
-The ML-10 notebook is available at `work/notebooks/w07_action_playbook.ipynb`.
+The [ML-10 Action Playbook notebook](notebooks/w07_action_playbook.ipynb) is available in the project repository.
 
 The aggregate metrics are stored in `work/outputs/ml10_action_playbook_metrics.json`. Supporting figures are stored in `work/figures/`.
 
 The dataset and row-level action queue are not included in the public repository.
 
-Repository: https://github.com/suyashverma0/flyrank-ml-workspace2
+**Project repository:** [FlyRank ML Workspace](https://github.com/suyashverma0/flyrank-ml-workspace2)
 
 ## 9. Acknowledgments and Data Credit
 
