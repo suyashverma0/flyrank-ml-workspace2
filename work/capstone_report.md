@@ -120,3 +120,18 @@ These errors show that content age and freshness alone do not fully explain the 
 The validation results also show that performance was lower under client-grouped validation than under random row validation. This highlights the importance of testing generalization across clients rather than relying only on random record-level splits.
 
 Overall, the model should be treated as a directional prioritization signal. Human review remains necessary before any content-refresh decision.
+# 7. Recommendation
+
+The action playbook converts model scores into a ranked review queue for human users. The client-grouped test set contains 7,115 scored content items, ranked by their model scores.
+
+Each item includes human-readable reason codes based on review signals such as low CTR, low engagement, older update dates, and weak average search position. These reason codes provide additional context for analysts instead of relying on the model score alone.
+
+In the generated queue, the most common reason-code combination was low CTR and low engagement, appearing for 2,693 items. A further 1,610 items had low engagement as their listed warning signal, while 1,045 items had no listed warning signal. The presence of no listed warning signal does not necessarily mean that an item is performing well; it means that none of the defined rules was triggered.
+
+The recommended workflow is to review higher-ranked items first, verify their content relevance and search intent, check the quality and completeness of the underlying data, and then make an editorial decision.
+
+The model must not automatically delete content, rewrite or publish pages, create URL redirects, or guarantee ranking and traffic improvements. A model score alone is not sufficient evidence for taking action.
+
+The model should be reviewed or retrained when input distributions or missingness change substantially, evaluation performance declines on later-period data, new content types or client populations appear, or human reviewers report poor recommendation quality.
+
+The action playbook is therefore a decision-support workflow. Final content-refresh decisions remain with human analysts and editorial teams.
