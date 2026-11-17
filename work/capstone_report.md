@@ -31,3 +31,29 @@ For the positive class, the model achieved precision of 0.54, recall of 0.64, an
 The model identifies a relatively large proportion of positive proxy cases, but it also produces a substantial number of false positives. Its accuracy is only slightly above the positive-class base rate, so accuracy alone does not establish strong predictive discrimination.
 
 These results support cautious use as a prioritization aid, with human review required before any content-refresh decision.
+## 4. Model / analysis
+
+This project uses Logistic Regression because the task involves binary classification and the model provides interpretable coefficients that help explain which input features are associated with the declining-content proxy.
+
+The target variable is a proxy label: `is_declining_proxy = 1` when `trend_direction` is `down`, and `0` otherwise.
+
+The model uses the following features:
+
+- Numeric: `search_volume`, `competition`, `cpc`, `word_count`, `char_count`, `content_age_days`, `days_since_last_update`
+- Categorical: `competition_level`, `content_type`, `main_intent`
+
+Numeric missing values are imputed using the median, with missingness indicators. Categorical missing values are represented as `Unknown`, and categorical features are one-hot encoded. Numeric features are standardized.
+
+The model deliberately excludes `trend_direction` and `trend_pct` from its input features because they are related to the target definition. Pseudonymous identifiers are also excluded from predictive features.
+
+The strongest positive coefficients included `competition_level_Unknown` (+1.278), `main_intent_informational` (+0.478), `main_intent_commercial` (+0.346), and `days_since_last_update` (+0.237). These coefficients describe associations in the fitted model, not causal effects.
+
+## 6. Interpretation
+
+The model's coefficients indicate that the unknown competition category, informational and commercial search intent, and longer time since the last update are positively associated with the declining-content proxy.
+
+The strongest negative coefficients included navigational search intent (-0.559), low competition (-0.516), and content age (-0.322).
+
+The error analysis identified 1,995 false positives and 1,335 false negatives. Some false positives were older content items that had been updated relatively recently. Some false negatives were very old content items that the model did not classify as declining.
+
+These errors show that content age and freshness alone do not fully explain the proxy label. The results should be treated as directional signals for further human investigation.
